@@ -1,6 +1,7 @@
 package seckill.example.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import seckill.example.dto.Exposer;
@@ -24,6 +25,12 @@ public class SeckillController
 {
     @Autowired
     private SeckillService seckillService;
+    @Value("${application.message}")
+    private String message;
+    @RequestMapping(value = "/test")
+    public String test(Model model){
+        return "list";
+    }
 
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     public String list(Model model)
@@ -58,7 +65,6 @@ public class SeckillController
     @RequestMapping(value = "/{seckillId}/exposer",
                     method = RequestMethod.POST,
                     produces = {"application/json;charset=UTF-8"})
-    @ResponseBody
     public SeckillResult<Exposer> exposer(Long seckillId)
     {
         SeckillResult<Exposer> result;
@@ -77,7 +83,6 @@ public class SeckillController
     @RequestMapping(value = "/{seckillId}/{md5}/execution",
             method = RequestMethod.POST,
             produces = {"application/json;charset=UTF-8"})
-    @ResponseBody
     public SeckillResult<SeckillExecution> execute(@PathVariable("seckillId") Long seckillId,
                                                    @PathVariable("md5") String md5,
                                                    @CookieValue(value = "killPhone",required = false) Long phone)
@@ -110,7 +115,6 @@ public class SeckillController
 
     //获取系统时间
     @RequestMapping(value = "/time/now",method = RequestMethod.GET)
-    @ResponseBody
     public SeckillResult<Long> time()
     {
         Date now=new Date();
