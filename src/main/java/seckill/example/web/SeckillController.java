@@ -1,9 +1,12 @@
 package seckill.example.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import seckill.example.dto.Exposer;
 import seckill.example.dto.SeckillExecution;
 import seckill.example.dto.SeckillResult;
@@ -19,18 +22,13 @@ import java.util.List;
 /**
  * Created by codingBoy on 16/11/28.
  */
-@RestController
+@Controller
 @RequestMapping("/seckill")//url:模块/资源/{}/细分
 public class SeckillController
 {
     @Autowired
     private SeckillService seckillService;
-    @Value("${application.message}")
-    private String message;
-    @RequestMapping(value = "/test")
-    public String test(Model model){
-        return "list";
-    }
+
 
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     public String list(Model model)

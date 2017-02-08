@@ -1,7 +1,7 @@
 package seckill.example.dao;
 
-import seckill.example.entity.SuccessKilled;
 import org.apache.ibatis.annotations.Param;
+import seckill.example.entity.SuccessKilled;
 
 /**
  * Created by codingBoy on 16/11/27.

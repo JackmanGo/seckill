@@ -1,7 +1,7 @@
 package seckill.example.dao;
 
-import seckill.example.entity.Seckill;
 import org.apache.ibatis.annotations.Param;
+import seckill.example.entity.Seckill;
 
 import java.util.Date;
 import java.util.List;
