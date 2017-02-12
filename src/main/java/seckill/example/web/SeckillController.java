@@ -1,12 +1,7 @@
 package seckill.example.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import seckill.example.dto.Exposer;
 import seckill.example.dto.SeckillExecution;
 import seckill.example.dto.SeckillResult;
@@ -16,13 +11,14 @@ import seckill.example.exception.RepeatKillException;
 import seckill.example.exception.SeckillCloseException;
 import seckill.example.service.SeckillService;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by codingBoy on 16/11/28.
  */
-@Controller
+@RestController
 @RequestMapping("/seckill")//url:模块/资源/{}/细分
 public class SeckillController
 {
@@ -30,37 +26,36 @@ public class SeckillController
     private SeckillService seckillService;
 
 
-    @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public String list(Model model)
+
+    @RequestMapping(value = "/listGoods",method = RequestMethod.GET)
+    public List<Seckill> list(HttpServletResponse response)
     {
         //list.jsp+mode=ModelAndView
         //获取列表页
         List<Seckill> list=seckillService.getSeckillList();
-        model.addAttribute("list",list);
-        return "list";
+        response.setHeader("Access-Control-Allow-Origin","*");
+        return list;
     }
 
-    @RequestMapping(value = "/{seckillId}/detail",method = RequestMethod.GET)
-    public String detail(@PathVariable("seckillId") Long seckillId, Model model)
+    @RequestMapping(value = "/detail/{seckillId}",method = RequestMethod.GET)
+    public Seckill detail(@PathVariable("seckillId") Long seckillId,HttpServletResponse response)
     {
         if (seckillId == null)
         {
-            return "redirect:/seckill/list";
+            //return "redirect:/seckill/list";
         }
 
         Seckill seckill=seckillService.getById(seckillId);
         if (seckill==null)
         {
-            return "forward:/seckill/list";
+            //return "forward:/seckill/list";
         }
-
-        model.addAttribute("seckill",seckill);
-
-        return "detail";
+        response.setHeader("Access-Control-Allow-Origin","*");
+        return seckill;
     }
 
     //ajax ,json暴露秒杀接口的方法
-    @RequestMapping(value = "/{seckillId}/exposer",
+    @RequestMapping(value = "/exposer/{seckillId}",
                     method = RequestMethod.POST,
                     produces = {"application/json;charset=UTF-8"})
     public SeckillResult<Exposer> exposer(Long seckillId)

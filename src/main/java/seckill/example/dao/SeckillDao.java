@@ -1,6 +1,7 @@
 package seckill.example.dao;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 import seckill.example.entity.Seckill;
 
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.List;
 /**
  * Created by codingBoy on 16/11/26.
  */
+@Repository
 public interface SeckillDao
 {
 

@@ -37,6 +37,8 @@ var seckill = {
             if (!seckill.validatePhone(userPhone)) {
                 //绑定手机 控制输出
                 var killPhoneModal = $('#killPhoneModal');
+                console.log(killPhoneModal);
+                console.log(typeof killPhoneModal);
                 killPhoneModal.modal({
                     show: true,//显示弹出层
                     backdrop: 'static',//禁止位置关闭
