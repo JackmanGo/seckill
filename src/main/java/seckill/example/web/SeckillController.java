@@ -108,9 +108,10 @@ public class SeckillController
 
     //获取系统时间
     @RequestMapping(value = "/time/now",method = RequestMethod.GET)
-    public SeckillResult<Long> time()
+    public SeckillResult<Long> time(HttpServletResponse response)
     {
         Date now=new Date();
+        response.setHeader("Access-Control-Allow-Origin","*");
         return new SeckillResult<Long>(true,now.getTime());
     }
 }
