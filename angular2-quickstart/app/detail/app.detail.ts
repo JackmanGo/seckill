@@ -12,9 +12,8 @@ declare var $:any;
   template:`<div class="container">
     <div class="panel panel-default text-center">
         <div class="pannel-heading">
-            <h1>{{seckill.name}}</h1>
+            <h1>seckill.name</h1>
         </div>
-
         <div class="panel-body">
             <h2 class="text-danger">
                 <span class="glyphicon glyphicon-time"></span>
@@ -24,16 +23,13 @@ declare var $:any;
     </div>
 </div>
 <div id="killPhoneModal" class="modal fade">
-
     <div class="modal-dialog">
-
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title text-center">
                     <span class="glyphicon glyphicon-phone"> </span>秒杀电话:
                 </h3>
             </div>
-
             <div class="modal-body">
                 <div class="row">
                     <div class="col-xs-8 col-xs-offset-2">
@@ -42,7 +38,6 @@ declare var $:any;
                     </div>
                 </div>
             </div>
-
             <div class="modal-footer">
                 <span id="killPhoneMessage" class="glyphicon"> </span>
                 <button type="button" id="killPhoneBtn" class="btn btn-success">
@@ -50,10 +45,8 @@ declare var $:any;
                     Submit
                 </button>
             </div>
-
         </div>
     </div>
-
 </div>`
 })
 export class AppDetail implements OnInit{
@@ -64,7 +57,6 @@ export class AppDetail implements OnInit{
   constructor(private appService:AppService,private router: ActivatedRoute){}
   ngOnInit():void {
     this.router.params.forEach( (params: Params) => {
-      console.log(params);
       this.appService.requestGoodsDetail(params['id']).then(results=>{
         this.seckill = results;
         //手机验证和登录,计时交互
@@ -76,28 +68,30 @@ export class AppDetail implements OnInit{
           //绑定手机 控制输出
           const killPhoneModal = $('#killPhoneModal');
           killPhoneModal.modal({
-            show: true,//显示弹出层
-            backdrop: 'static',//禁止位置关闭
-            keyboard: false//关闭键盘事件
+            show: true//显示弹出层
           });
+        }else{
+          this.userCompleteLogin();
         }
-        //已经登录
-        //计时交互
-        this.appService.requestNowTime().then(nowTime=>{
-          this.nowTime = nowTime;
-          //时间判断 计时交互
-          this.countDown(this.seckill.seckillId, this.nowTime, this.seckill.startTime,this.seckill.endTime);
-        });
       })
     })
+  }
+  userCompleteLogin():void{
+    //已经登录
+    //计时交互
+    this.appService.requestNowTime().then(nowTime=>{
+      this.nowTime = nowTime;
+      //时间判断 计时交互
+      this.countDown(this.seckill.seckillId, this.nowTime, this.seckill.startTime,this.seckill.endTime);
+    });
   }
   killPhoneKey(inputPhone:any):void {
     console.log("inputPhone: " + inputPhone);
     if (this.validatePhone(inputPhone)) {
       //电话写入cookie(7天过期)
       $.cookie('userPhone', inputPhone, {expires: 7, path: '/seckill'});
-      //验证通过　　刷新页面
-      window.location.reload();
+      //验证通过
+      this.userCompleteLogin();
     } else {
       //todo 错误文案信息抽取到前端字典里
       $('#killPhoneMessage').hide().html('<label class="label label-danger">手机号错误!</label>').show(300);
