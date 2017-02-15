@@ -41,7 +41,7 @@ public class DataSourceConfig {
         } catch (PropertyVetoException e) {
             e.printStackTrace();
         }
-        ds.setJdbcUrl("jdbc:mysql://192.168.110.2:3306/seckill?useUnicode=true&characterEncoding=utf-8");
+        ds.setJdbcUrl("jdbc:mysql://172.17.0.2:3306/seckill?useUnicode=true&characterEncoding=utf-8");
         ds.setUser("root");
         ds.setPassword("toor");
         return  ds;

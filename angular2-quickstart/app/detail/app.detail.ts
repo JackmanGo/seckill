@@ -5,7 +5,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Router }  from '@angular/router';
 import { ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 import {CookieService} from 'angular2-cookie/core';
-
+import {Observable} from 'rxjs/Rx';
 
 declare const $:any;
 
@@ -14,7 +14,7 @@ declare const $:any;
   template:`<div class="container">
     <div class="panel panel-default text-center">
         <div class="pannel-heading">
-            <h1>seckill.name</h1>
+            <h1></h1>
         </div>
         <div class="panel-body">
             <h2 class="text-danger">
@@ -50,20 +50,22 @@ declare const $:any;
 </modal>`
 })
 export class AppDetail implements OnInit{
-   @ViewChild('killPhoneModal')
-   modal: ModalComponent;
+  @ViewChild('killPhoneModal')
+  modal: ModalComponent;
   //点击的某个商品
   seckill:Seckill;
   //当前时间
   nowTime:number;
   selected: string;
   output: string;
+  countTimeMessage:string;
+  countTimeDiff:number;
   constructor(private appService:AppService,private router: ActivatedRoute,private cookieService:CookieService){}
   ngOnInit():void {
     this.router.params.forEach( (params: Params) => {
-      this.checkUserInfo();
       this.appService.requestGoodsDetail(params['id']).then(results=>{
         this.seckill = results;
+        console.log(this.seckill);
         this.checkUserInfo();
       })
     })
@@ -84,12 +86,11 @@ export class AppDetail implements OnInit{
   }
   userCompleteLogin():void{
     //已经登录
-    console.log("now login user is :"+this.cookieService.get("userPhone"));
     //计时交互
     this.appService.requestNowTime().then(nowTime=>{
       this.nowTime = nowTime;
       //时间判断 计时交互
-      this.countDown(this.seckill.seckillId, this.nowTime, this.seckill.startTime,this.seckill.endTime);
+      this.calculateCountDown(this.seckill.seckillId, this.nowTime, this.seckill.startTime,this.seckill.endTime);
     });
   }
   killPhoneKey(inputPhone:any):void {
@@ -99,7 +100,6 @@ export class AppDetail implements OnInit{
       this.cookieService.put('userPhone', inputPhone);
       //验证通过
       const userPhone = this.cookieService.get("userPhone");;
-      console.log(userPhone);
       this.userCompleteLogin();
     } else {
       //todo 错误文案信息抽取到前端字典里
@@ -113,30 +113,51 @@ export class AppDetail implements OnInit{
       return false;
     }
   }
-  countDown(seckillId:number, nowTime:number, startTime:number, endTime:number):void {
-    console.log(seckillId + '_' + nowTime + '_' + startTime + '_' + endTime);
+  calculateCountDown(seckillId:number, nowTime:number, startTime:number, endTime:number):void {
     const seckillBox = $('#seckill-box');
+    console.log("nowTime:"+nowTime);
+    console.log("startTime:"+startTime);
+    console.log("endTime:"+endTime);
     if (nowTime > endTime) {
       //秒杀结束
       seckillBox.html('秒杀结束!');
     } else if (nowTime < startTime) {
       //秒杀未开始,计时事件绑定
+      console.log(startTime);
       const killTime = new Date(startTime + 1000);//todo 防止时间偏移
-      //计时时间
-      seckillBox.countdown(killTime, function (event:any) {
-      //时间格式
-      const format = event.strftime('秒杀倒计时: %D天 %H时 %M分 %S秒 ');
-        seckillBox.html(format);
-      }).on('finish.countdown', function () {
-        //时间完成后回调事件
-        //获取秒杀地址,控制现实逻辑,执行秒杀
-        console.log('______fininsh.countdown');
-        //handlerSeckill(seckillId, seckillBox);
-      });
+      this.countTimeDiff = startTime-nowTime;
+      console.log(this.countTimeDiff);
+      Observable.interval(1000).map((x:any) => {
+        this.countTimeDiff = Math.floor((killTime.getTime() - new Date().getTime()) / 1000);
+      }).subscribe((x) => { 
+          this.countTimeMessage = this.dhms(this.countTimeDiff);
+          console.log(this.countTimeMessage);
+          seckillBox.html('秒杀!'+this.countTimeMessage);
+          //秒杀开始
+          //handlerSeckill(seckillId, seckillBox);
+        });
     } else {
       //秒杀开始
       //handlerSeckill(seckillId, seckillBox);
     }
+  }
+  //calculate time
+  dhms(t:any){
+     let days, hours, minutes, seconds;
+     days = Math.floor(t / 86400);
+     t -= days * 86400;
+     hours = Math.floor(t / 3600) % 24;
+     t -= hours * 3600;
+     minutes = Math.floor(t / 60) % 60;
+     t -= minutes * 60;
+     seconds = t % 60;
+
+     return [
+             days + 'd',
+             hours + 'h',
+             minutes + 'm',
+             seconds + 's'
+            ].join(' ');                              
   }
 
 }

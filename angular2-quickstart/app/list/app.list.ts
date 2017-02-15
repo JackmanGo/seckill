@@ -39,11 +39,21 @@ import {Seckill} from "../model/seckill";
 })
 export class AppList implements OnInit{
   seckills:Seckill[];
+  countdownTimeStr = '01:12:07:13';
+  countdownFlipTimeStr = '00:04:13:17';
   constructor(private appService:AppService){}
   ngOnInit():void {
     this.appService.requestGoodsList().then(results=>{
       this.seckills = results;
     })
+  }
+
+  onElapse(): void {
+    alert('Countdown is finished!');
+  }
+
+  onChange(value: any) {
+    console.log(value);
   }
   getTime(data: number): string{
     var date = new Date(data); //传个时间戳过去就可以了

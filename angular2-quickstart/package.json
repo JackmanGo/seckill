@@ -24,6 +24,7 @@
     "bootstrap": "^3.3.7",
     "cookies": "^0.6.2",
     "core-js": "^2.4.1",
+    "countdown": "^2.6.0",
     "ng2-bs3-modal": "^0.10.4",
     "reflect-metadata": "^0.1.8",
     "rxjs": "5.0.3",
