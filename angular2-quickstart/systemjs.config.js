@@ -12,7 +12,8 @@
     // ng2-bootstrap
     'moment': 'node_modules/moment',
     'ng2-bootstrap': 'node_modules/ng2-bootstrap',
-    'ng2-bs3-modal': 'node_modules/ng2-bs3-modal'
+    'ng2-bs3-modal': 'node_modules/ng2-bs3-modal',
+    'angular2-cookie': 'node_modules/angular2-cookie'
   };
   // packages tells the System loader how to load when no filename and/or no extension
   var packages = {
@@ -40,6 +41,10 @@
     'ng2-bs3-modal': {
       defaultExtension: 'js'
     },
+    'angular2-cookie': {
+        main: 'core.js',
+        defaultExtension: 'js'
+    }
   };
   var ngPackageNames = [
     'common',

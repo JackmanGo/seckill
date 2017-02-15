@@ -9,6 +9,7 @@ import { AppList } from './list/app.list';
 import { AppDetail } from './detail/app.detail';
 import { AppService } from './app.service';
 import { Ng2Bs3ModalModule } from 'ng2-bs3-modal/ng2-bs3-modal';
+import { CookieService } from 'angular2-cookie/services/cookies.service';
 
 @NgModule({
   declarations: [AppList,AppDetail,AppComponent],
@@ -30,7 +31,7 @@ import { Ng2Bs3ModalModule } from 'ng2-bs3-modal/ng2-bs3-modal';
     HttpModule,
     Ng2Bs3ModalModule
   ],
-  providers: [AppService,AppDetail],
+  providers: [AppService,AppDetail,CookieService],
   bootstrap: [AppComponent]
 })
 

@@ -4,6 +4,7 @@ import {Seckill} from "../model/seckill";
 import { ActivatedRoute, Params } from '@angular/router';
 import { Router }  from '@angular/router';
 import { ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
+import {CookieService} from 'angular2-cookie/core';
 
 
 declare const $:any;
@@ -57,7 +58,7 @@ export class AppDetail implements OnInit{
   nowTime:number;
   selected: string;
   output: string;
-  constructor(private appService:AppService,private router: ActivatedRoute){}
+  constructor(private appService:AppService,private router: ActivatedRoute,private cookieService:CookieService){}
   ngOnInit():void {
     this.router.params.forEach( (params: Params) => {
       this.checkUserInfo();
@@ -71,12 +72,10 @@ export class AppDetail implements OnInit{
     //手机验证和登录,计时交互
     //规划我们的交互流程
     //在cookie中查找手机号
-    const userPhone = $.cookie('userPhone');
+    const userPhone = this.cookieService.get("userPhone");
     //验证手机号
     if (!this.validatePhone(userPhone)) {
-      //绑定手机 控制输出
-      const killPhoneModal = $('#killPhoneModal');
-      //console.log(killPhoneModal);
+      //绑定手机
       this.modal.open();
     }else{
       this.userCompleteLogin();
@@ -95,9 +94,9 @@ export class AppDetail implements OnInit{
     console.log("inputPhone: " + inputPhone+this.validatePhone(inputPhone));
     if (this.validatePhone(inputPhone)) {
       //电话写入cookie(7天过期)
-      $.cookie('userPhone', inputPhone, {expires: 7, path: '/seckill'});
+      this.cookieService.put('userPhone', inputPhone);
       //验证通过
-      const userPhone = $.cookie('userPhone');
+      const userPhone = this.cookieService.get("userPhone");;
       console.log(userPhone);
       this.userCompleteLogin();
     } else {
