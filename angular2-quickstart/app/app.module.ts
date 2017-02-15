@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { AppList } from './list/app.list';
 import { AppDetail } from './detail/app.detail';
 import { AppService } from './app.service';
+import { Ng2Bs3ModalModule } from 'ng2-bs3-modal/ng2-bs3-modal';
 
 @NgModule({
   declarations: [AppList,AppDetail,AppComponent],
@@ -26,7 +27,8 @@ import { AppService } from './app.service';
     FormsModule,
     AlertModule.forRoot(),
     DatepickerModule.forRoot(),
-    HttpModule
+    HttpModule,
+    Ng2Bs3ModalModule
   ],
   providers: [AppService,AppDetail],
   bootstrap: [AppComponent]

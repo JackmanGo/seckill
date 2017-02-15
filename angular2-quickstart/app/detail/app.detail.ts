@@ -1,11 +1,12 @@
-import {Component,OnInit} from '@angular/core';
+import {Component,OnInit,ViewChild} from '@angular/core';
 import {AppService} from '../app.service';
 import {Seckill} from "../model/seckill";
 import { ActivatedRoute, Params } from '@angular/router';
 import { Router }  from '@angular/router';
+import { ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
 
 
-declare var $:any;
+declare const $:any;
 
 @Component({
   selector: 'detail',
@@ -22,59 +23,64 @@ declare var $:any;
         </div>
     </div>
 </div>
-<div id="killPhoneModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+<modal [animation]="true" [keyboard]="false" [backdrop]="false" (onClose)="checkUserInfo()" (onDismiss)="checkUserInfo()"
+    [cssClass]="cssClass" #killPhoneModal>
+        <form #modalForm="ngForm">
+            <modal-header [show-close]="true">
                 <h3 class="modal-title text-center">
                     <span class="glyphicon glyphicon-phone"> </span>秒杀电话:
                 </h3>
-            </div>
-            <div class="modal-body">
+            </modal-header>
+            <modal-body>
                 <div class="row">
                     <div class="col-xs-8 col-xs-offset-2">
-                        <input type="text" name="killPhone" id="killPhoneKey"
-                               placeholder="填写手机号^o^" class="form-control" (click)="killPhoneKey(this.value)">
+                        <input type="text" name="killPhone" placeholder="填写手机号^o^" class="form-control" #phoneInput>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
+            </modal-body>
+            <modal-footer>
                 <span id="killPhoneMessage" class="glyphicon"> </span>
-                <button type="button" id="killPhoneBtn" class="btn btn-success">
+                <button type="button" id="killPhoneBtn" class="btn btn-success" (click)="killPhoneKey(phoneInput.value)">
                     <span class="glyphicon glyphicon-phone"></span>
                     Submit
                 </button>
-            </div>
-        </div>
-    </div>
-</div>`
+            </modal-footer>
+        </form>
+</modal>`
 })
 export class AppDetail implements OnInit{
+   @ViewChild('killPhoneModal')
+   modal: ModalComponent;
   //点击的某个商品
   seckill:Seckill;
   //当前时间
   nowTime:number;
+  selected: string;
+  output: string;
   constructor(private appService:AppService,private router: ActivatedRoute){}
   ngOnInit():void {
     this.router.params.forEach( (params: Params) => {
+      this.checkUserInfo();
       this.appService.requestGoodsDetail(params['id']).then(results=>{
         this.seckill = results;
-        //手机验证和登录,计时交互
-        //规划我们的交互流程
-        //在cookie中查找手机号
-        const userPhone = $.cookie('userPhone');
-        //验证手机号
-        if (!this.validatePhone(userPhone)) {
-          //绑定手机 控制输出
-          const killPhoneModal = $('#killPhoneModal');
-          killPhoneModal.modal({
-            show: true//显示弹出层
-          });
-        }else{
-          this.userCompleteLogin();
-        }
+        this.checkUserInfo();
       })
     })
+  }
+  checkUserInfo(){
+    //手机验证和登录,计时交互
+    //规划我们的交互流程
+    //在cookie中查找手机号
+    const userPhone = $.cookie('userPhone');
+    //验证手机号
+    if (!this.validatePhone(userPhone)) {
+      //绑定手机 控制输出
+      const killPhoneModal = $('#killPhoneModal');
+      //console.log(killPhoneModal);
+      this.modal.open();
+    }else{
+      this.userCompleteLogin();
+    }
   }
   userCompleteLogin():void{
     //已经登录
@@ -86,11 +92,13 @@ export class AppDetail implements OnInit{
     });
   }
   killPhoneKey(inputPhone:any):void {
-    console.log("inputPhone: " + inputPhone);
+    console.log("inputPhone: " + inputPhone+this.validatePhone(inputPhone));
     if (this.validatePhone(inputPhone)) {
       //电话写入cookie(7天过期)
       $.cookie('userPhone', inputPhone, {expires: 7, path: '/seckill'});
       //验证通过
+      const userPhone = $.cookie('userPhone');
+      console.log(userPhone);
       this.userCompleteLogin();
     } else {
       //todo 错误文案信息抽取到前端字典里
@@ -104,6 +112,19 @@ export class AppDetail implements OnInit{
       return false;
     }
   }
+  closed() {
+    this.output = '(closed) ' + this.selected;
+  }
+  dismissed() {
+    this.output = '(dismissed)';
+  }
+  opened() {
+    this.output = '(opened)';
+  }
+  open() {
+    this.modal.open();
+  }
+
   countDown(seckillId:number, nowTime:number, startTime:number, endTime:number):void {
     console.log(seckillId + '_' + nowTime + '_' + startTime + '_' + endTime);
     const seckillBox = $('#seckill-box');
