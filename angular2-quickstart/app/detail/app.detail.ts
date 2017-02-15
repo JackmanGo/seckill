@@ -24,7 +24,7 @@ declare const $:any;
         </div>
     </div>
 </div>
-<modal [animation]="true" [keyboard]="false" [backdrop]="false" (onClose)="checkUserInfo()" (onDismiss)="checkUserInfo()"
+<modal [animation]="true" [keyboard]="false" [backdrop]="false"
     [cssClass]="cssClass" #killPhoneModal>
         <form #modalForm="ngForm">
             <modal-header [show-close]="true">
@@ -78,11 +78,13 @@ export class AppDetail implements OnInit{
       //绑定手机
       this.modal.open();
     }else{
+      this.modal.close();
       this.userCompleteLogin();
     }
   }
   userCompleteLogin():void{
     //已经登录
+    console.log("now login user is :"+this.cookieService.get("userPhone"));
     //计时交互
     this.appService.requestNowTime().then(nowTime=>{
       this.nowTime = nowTime;
@@ -111,19 +113,6 @@ export class AppDetail implements OnInit{
       return false;
     }
   }
-  closed() {
-    this.output = '(closed) ' + this.selected;
-  }
-  dismissed() {
-    this.output = '(dismissed)';
-  }
-  opened() {
-    this.output = '(opened)';
-  }
-  open() {
-    this.modal.open();
-  }
-
   countDown(seckillId:number, nowTime:number, startTime:number, endTime:number):void {
     console.log(seckillId + '_' + nowTime + '_' + startTime + '_' + endTime);
     const seckillBox = $('#seckill-box');
