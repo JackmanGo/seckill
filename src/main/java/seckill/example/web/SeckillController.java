@@ -58,10 +58,11 @@ public class SeckillController {
 	// ajax ,json暴露秒杀接口的方法
 	@RequestMapping(value = "/exposer/{seckillId}", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
-	public SeckillResult<Exposer> exposer(Long seckillId) {
+	public SeckillResult<Exposer> exposer(@PathVariable("seckillId") Long seckillId) {
 		SeckillResult<Exposer> result;
 		try {
 			Exposer exposer = seckillService.exportSeckillUrl(seckillId);
+			logger.info(exposer.toString());
 			result = new SeckillResult<Exposer>(true, exposer);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -71,10 +72,11 @@ public class SeckillController {
 		return result;
 	}
 
-	@RequestMapping(value = "/{seckillId}/{md5}/execution", method = RequestMethod.POST, produces = {
+	@RequestMapping(value = "/execution/{seckillId}/{md5}", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	public SeckillResult<SeckillExecution> execute(@PathVariable("seckillId") Long seckillId,
-			@PathVariable("md5") String md5, @CookieValue(value = "killPhone", required = false) Long phone) {
+			@PathVariable("md5") String md5, @CookieValue(value = "killPhone", required = false) Long phones) {
+		Long phone = Long.valueOf("18408221624");
 		if (phone == null) {
 			return new SeckillResult<SeckillExecution>(false, "未注册");
 		}

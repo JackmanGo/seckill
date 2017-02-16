@@ -21,9 +21,6 @@ import org.springframework.util.DigestUtils;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by codingBoy on 16/11/28.
- */
 //@Component @Service @Dao @Controller
 @Service
 public class SeckillServiceImpl implements SeckillService
@@ -55,10 +52,11 @@ public class SeckillServiceImpl implements SeckillService
         {
             return new Exposer(false,seckillId);
         }
-
+        logger.info(seckill.toString());
         //若是秒杀未开启
         Date startTime=seckill.getStartTime();
         Date endTime=seckill.getEndTime();
+        logger.info(seckill.getStartTime().getTime()+"");
         //系统当前时间
         Date nowTime=new Date();
         if (startTime.getTime()>nowTime.getTime() || endTime.getTime()<nowTime.getTime())

@@ -1,5 +1,5 @@
 export class Seckill{
-	  seckillId:number;
+	seckillId:number;
     name:string;
     number:number;
     startTime:number;

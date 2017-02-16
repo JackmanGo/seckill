@@ -118,6 +118,10 @@ export class AppDetail implements OnInit{
     console.log("nowTime:"+nowTime);
     console.log("startTime:"+startTime);
     console.log("endTime:"+endTime);
+    //test data
+    nowTime = 1487214167223;
+    startTime = 1487224167223;
+    endTime = 1487214367223;
     if (nowTime > endTime) {
       //秒杀结束
       seckillBox.html('秒杀结束!');
@@ -132,14 +136,48 @@ export class AppDetail implements OnInit{
       }).subscribe((x) => { 
           this.countTimeMessage = this.dhms(this.countTimeDiff);
           console.log(this.countTimeMessage);
-          seckillBox.html('秒杀!'+this.countTimeMessage);
+          seckillBox.html('秒杀开始时间!'+this.countTimeMessage);
           //秒杀开始
-          //handlerSeckill(seckillId, seckillBox);
+          this.handlerSeckill(seckillId, seckillBox);
         });
     } else {
       //秒杀开始
-      //handlerSeckill(seckillId, seckillBox);
+      this.handlerSeckill(seckillId, seckillBox);
     }
+  }
+  handlerSeckill(seckillId:number,node:any):void{
+    //获取秒杀地址,控制显示器,执行秒杀
+    node.hide().html('<button class="btn btn-primary btn-lg" id="killBtn">开始秒杀</button>');
+    //开启秒杀
+    //获取秒杀地址
+    this.appService.requestSeckillUrl(seckillId).then(exposer=>{
+      if(exposer.data.exposed){
+        let md5 = exposer.data.md5;
+        //绑定一次点击事件
+        $('#killBtn').one('click', function () {
+          //执行秒杀请求
+          //1.先禁用按钮
+          $(this).addClass('disabled');//,<-$(this)===('#killBtn')->
+          //2.发送秒杀请求执行秒杀
+            this.appService.executionSeckill(seckillId,md5).then(seckilledResult=>{
+              if (seckilledResult.success) {
+                let killResult = seckilledResult.data;
+                let state = killResult.state;
+                let stateInfo = killResult.stateInfo;
+                //显示秒杀结果
+                node.html('<span class="label label-success">' + stateInfo + '</span>');
+              }      
+            });
+        });
+        node.show();  
+      }else{
+        //未开启秒杀(浏览器计时偏差)
+        var now = exposer['now'];
+        var start = exposer['start'];
+        var end = exposer['end'];
+        //seckill.countDown(seckillId, now, start, end);
+      }
+    });
   }
   //calculate time
   dhms(t:any){
@@ -151,12 +189,11 @@ export class AppDetail implements OnInit{
      minutes = Math.floor(t / 60) % 60;
      t -= minutes * 60;
      seconds = t % 60;
-
      return [
-             days + 'd',
-             hours + 'h',
-             minutes + 'm',
-             seconds + 's'
+             days + '天',
+             hours + '小时',
+             minutes + '分钟',
+             seconds + '秒'
             ].join(' ');                              
   }
 
