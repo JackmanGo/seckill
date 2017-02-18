@@ -1,6 +1,7 @@
 import {Component,OnInit,ViewChild} from '@angular/core';
 import {AppService} from '../app.service';
-import {Seckill} from "../model/seckill";
+import { Seckill } from "../model/seckill";
+import { Result } from "../model/result";
 import { ActivatedRoute, Params } from '@angular/router';
 import { Router }  from '@angular/router';
 import { ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
@@ -157,9 +158,9 @@ export class AppDetail implements OnInit{
         $('#killBtn').one('click', function () {
           //执行秒杀请求
           //1.先禁用按钮
-          $(this).addClass('disabled');//,<-$(this)===('#killBtn')->
+          $(this).addClass('disabled');
           //2.发送秒杀请求执行秒杀
-            this.appService.executionSeckill(seckillId,md5).then(seckilledResult=>{
+            this.appService.executionSeckill(seckillId,md5).then((seckilledResult:Result)=>{
               if (seckilledResult.success) {
                 let killResult = seckilledResult.data;
                 let state = killResult.state;
@@ -169,7 +170,7 @@ export class AppDetail implements OnInit{
               }      
             });
         });
-        node.show();  
+        node.show();
       }else{
         //未开启秒杀(浏览器计时偏差)
         var now = exposer['now'];

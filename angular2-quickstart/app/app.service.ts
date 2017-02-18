@@ -39,7 +39,7 @@ export class AppService {
                    .then(response=>response.json() as Exposer) 
                          .catch(this.handleError);
 	}
-	executionSeckill(seckillId:number,md5:any):Promise<Result>{
+	executionSeckill(seckillId:number,md5:number):Promise<Result>{
         return this.http.get(this.execution+seckillId+md5).toPromise()
                    .then(response=>response.json() as Result) 
                          .catch(this.handleError);

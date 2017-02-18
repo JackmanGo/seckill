@@ -18,7 +18,7 @@ import seckill.example.dto.Exposer;
 import seckill.example.dto.SeckillExecution;
 import seckill.example.dto.SeckillResult;
 import seckill.example.entity.Seckill;
-import seckill.example.enums.SeckillStatEnum;
+import seckill.example.enums.SeckillStateEnum;
 import seckill.example.exception.RepeatKillException;
 import seckill.example.exception.SeckillCloseException;
 import seckill.example.service.SeckillService;
@@ -86,13 +86,13 @@ public class SeckillController {
 			SeckillExecution execution = seckillService.executeSeckill(seckillId, phone, md5);
 			return new SeckillResult<SeckillExecution>(true, execution);
 		} catch (RepeatKillException e1) {
-			SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.REPEAT_KILL);
+			SeckillExecution execution = new SeckillExecution(seckillId, SeckillStateEnum.REPEAT_KILL);
 			return new SeckillResult<SeckillExecution>(true, execution);
 		} catch (SeckillCloseException e2) {
-			SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.END);
+			SeckillExecution execution = new SeckillExecution(seckillId, SeckillStateEnum.END);
 			return new SeckillResult<SeckillExecution>(true, execution);
 		} catch (Exception e) {
-			SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.INNER_ERROR);
+			SeckillExecution execution = new SeckillExecution(seckillId, SeckillStateEnum.INNER_ERROR);
 			return new SeckillResult<SeckillExecution>(true, execution);
 		}
 
